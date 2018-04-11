@@ -1,0 +1,25 @@
+{
+  "name": "react-component-markdown",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "1.1.4"
+  },
+  "dependencies": {
+    "@babel/preset-env": "^7.0.0-beta.44",
+    "@babel/preset-es2015": "^7.0.0-beta.44",
+    "@babel/preset-react": "^7.0.0-beta.44",
+    "@babel/standalone": "^7.0.0-beta.44",
+    "antd": "3.4.1",
+    "markdown-it": "8.4.1",
+    "prismjs": "^1.14.0",
+    "react": "16.3.1",
+    "react-dom": "16.3.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

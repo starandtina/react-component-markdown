@@ -1,0 +1,79 @@
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/prismjs@1.6.0/themes/prism-tomorrow.css"/>
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background: hsl(0, 0%, 90%);
+}
+pre {
+  color: hsl(0, 0%, 90%);
+  background: hsl(0, 0%, 10%);
+  padding: 10px;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+  margin-bottom: 0;
+}
+.render-js {
+  background: white;
+  border: 2px solid hsl(0, 0%, 10%);
+  padding: 10px;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+</style>
+<h1 id="actually-render-your-code-blocks"><a class="header-anchor" href="#actually-render-your-code-blocks" aria-hidden="true">#</a> Actually render your code blocks</h1>
+<p>This is my markdown file.</p>
+<pre class="render-js-code"><code class="jsx"><span class="token constant">DOM_NODE</span><span class="token punctuation">.</span>innerHTML <span class="token operator">=</span> <span class="token string">'Hey there!'</span>
+</code></pre>
+<div id="render-pn00mbd6v5g" class="render-js"></div>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(event) { var DOM_NODE = document.getElementById("render-pn00mbd6v5g");
+DOM_NODE.innerHTML = 'Hey there!'
+
+})</script>
+
+<h2 id="what-about-babel"><a class="header-anchor" href="#what-about-babel" aria-hidden="true">#</a> What About babel?</h2>
+<p>If you want to use babel, make sure to add babel-standalone like this file does at the top:</p>
+<pre class="render-js-code"><code class="jsx"><span class="token keyword">class</span> <span class="token class-name">Demo</span> <span class="token keyword">extends</span> <span class="token class-name">React<span class="token punctuation">.</span>Component</span> <span class="token punctuation">{</span>
+  <span class="token function">componentDidMount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">setInterval</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">forceUpdate</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">500</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">></span></span>This is cool times <span class="token punctuation">{</span>Date<span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">></span></span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+ReactDOM<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Demo</span><span class="token punctuation">/></span></span><span class="token punctuation">,</span>
+  <span class="token constant">DOM_NODE</span>
+<span class="token punctuation">)</span>
+</code></pre>
+<div id="render-a9hrncgtde" class="render-js"></div>
+<script type="text/babel">
+(function() { var DOM_NODE = document.getElementById("render-a9hrncgtde");
+class Demo extends React.Component {
+  componentDidMount() {
+    setInterval(() => this.forceUpdate(), 500)
+  }
+  render() {
+    return <h1>This is cool times {Date.now()}</h1>
+  }
+}
+
+ReactDOM.render(
+  <Demo/>,
+  DOM_NODE
+)
+
+})()</script>
+
+<p>Isn't that</p>
+<ul>
+<li>Cool</li>
+<li>Awesome</li>
+<li>Incredibly inflexible?</li>
+</ul>
+<p>Yes.</p>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script src="https://unpkg.com/react@15.6.1/dist/react.min.js"></script>
+<script src="https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js"></script>
+
