@@ -1,10 +1,16 @@
+/* eslint-disable no-eval */
+
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Row, Col, Input } from 'antd'
+import CodeMirror from 'react-codemirror'
+import { Button, Row, Col } from 'antd'
 import MarkdownIt from 'markdown-it'
 import Prism from 'prismjs'
-import 'prismjs/components/prism-jsx.js'
 
+import 'prismjs/components/prism-jsx.js'
+import 'codemirror/mode/markdown/markdown'
+
+import 'codemirror/lib/codemirror.css'
 import 'antd/dist/antd.css'
 import 'prismjs/themes/prism-dark.css'
 import './App.css'
@@ -13,13 +19,11 @@ window.Button = Button
 window.React = React
 window.ReactDOM = ReactDOM
 
-const { TextArea } = Input
 const aliases = {
   js: 'jsx',
-  babel: 'jsx'
+  babel: 'jsx',
 }
-const initValue = `
-# Markdown
+const initValue = `# Markdown
 
 ## Use JS code block
 
@@ -52,9 +56,10 @@ ReactDOM.render(
 \`\`\`
 
 **Awesome!**`
+
 class App extends Component {
   state = {
-    value: ''
+    value: initValue,
   }
 
   constructor(props) {
@@ -70,73 +75,81 @@ class App extends Component {
         const highlightLang = aliases[lang]
 
         if (highlightLang && Prism.languages[highlightLang]) {
-          const highlighedCode = Prism.highlight(str, Prism.languages[highlightLang]).trim()
+          const highlighedCode = Prism.highlight(
+            str,
+            Prism.languages[highlightLang],
+          ).trim()
+
+          const uniqueId = `render-${Math.random()
+            .toString(32)
+            .substring(2)}`
+
+          const script = `
+            (function() { var DOM_NODE = document.getElementById("${uniqueId}");
+              ${str}
+            })()`
 
           if (lang === 'babel') {
-            const uniqueId = `render-${Math.random()
-              .toString(32)
-              .substring(2)}`
-
             import('@babel/standalone').then(Babel => {
-              const script = `
-              (function() { var DOM_NODE = document.getElementById("${uniqueId}");
-                ${str}
-              })()`
               try {
                 const transformedScript = Babel.transform(script, {
-                  presets: ['es2015', 'react', 'stage-0']
+                  presets: ['es2015', 'react', 'stage-0'],
                 }).code
 
                 eval(transformedScript)
-              } catch (err) {
-                console.error(err)
-              }
+              } catch (__) {}
             })
 
             return `
                 <div>${highlighedCode}</div>
                 <div id="${uniqueId}" class="render-js"></div>
               `
+          } else {
+            try {
+              eval(script)
+            } catch (__) {}
           }
 
           return highlighedCode
         }
 
         return str
-      }
+      },
     })
   }
 
   componentDidMount() {
     setTimeout(() => {
       this.setState({
-        value: initValue.trim()
+        value: initValue.trim(),
       })
-    })
+    }, 0)
   }
 
-  handleTextAreaChange = e => {
+  handleCodeMirrorChange = value => {
     this.setState({
-      value: e.target.value
+      value,
     })
   }
 
   render() {
-    // console.log(this.md.render(this.state.value))
     return (
       <Row gutter={16}>
         <Col xs={12}>
-          <TextArea
-            rows={40}
-            cols={100}
+          <CodeMirror
             value={this.state.value}
-            onChange={this.handleTextAreaChange}
+            onChange={this.handleCodeMirrorChange}
+            options={{
+              lineNumbers: true,
+              mode: 'markdown',
+            }}
+            autoFocus
           />
         </Col>
         <Col xs={12}>
           <div
             dangerouslySetInnerHTML={{
-              __html: this.md.render(this.state.value)
+              __html: this.md.render(this.state.value),
             }}
           />
         </Col>
