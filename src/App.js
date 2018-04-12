@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { Row, Col, Input } from 'antd'
+import { Button, Row, Col, Input } from 'antd'
 import MarkdownIt from 'markdown-it'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-jsx.js'
@@ -9,39 +9,39 @@ import 'antd/dist/antd.css'
 import 'prismjs/themes/prism-dark.css'
 import './App.css'
 
+window.Button = Button
 window.React = React
 window.ReactDOM = ReactDOM
 
 const { TextArea } = Input
 const aliases = {
   js: 'jsx',
-  babel: 'jsx',
+  babel: 'jsx'
 }
+const initValue = `
+# Markdown
 
-class App extends Component {
-  state = {
-    value: `
-# Actually render your code blocks
-
-This is my markdown file.
+## Use JS code block
 
 \`\`\`js
 const value = 'Hey there!'
 \`\`\`
 
-What About babel?
------------------
-
-If you want to use babel, make sure to add babel-standalone like this file does at the top:
-k
+## What About \`babel\`?
 
 \`\`\`babel
 class Demo extends React.Component {
-  componentDidMount() {
+  handleButtonClick = () => {
     setInterval(() => this.forceUpdate(), 500)
   }
+  
   render() {
-    return <h1>This is cool times {Date.now()}</h1>
+    return (
+      <div>
+        <Button type='primary' onClick={this.handleButtonClick}>Start the timer</Button>
+        <h1>{Date.now()}</h1>
+      </div>
+    )
   }
 }
 
@@ -51,13 +51,10 @@ ReactDOM.render(
 )
 \`\`\`
 
-Isn't that
-
-- Cool
-- Awesome
-- Incredibly inflexible?
-
-Yes.`,
+**Awesome!**`
+class App extends Component {
+  state = {
+    value: ''
   }
 
   constructor(props) {
@@ -66,50 +63,61 @@ Yes.`,
     this.md = new MarkdownIt({
       html: true,
       highlight: (str, lang) => {
+        if (!lang) {
+          return str
+        }
+
         const highlightLang = aliases[lang]
 
         if (highlightLang && Prism.languages[highlightLang]) {
-          const highlighedCode = Prism.highlight(
-            str,
-            Prism.languages[highlightLang],
-          ).trim()
+          const highlighedCode = Prism.highlight(str, Prism.languages[highlightLang]).trim()
 
           if (lang === 'babel') {
             const uniqueId = `render-${Math.random()
               .toString(32)
               .substring(2)}`
-            const script = `
+
+            import('@babel/standalone').then(Babel => {
+              const script = `
               (function() { var DOM_NODE = document.getElementById("${uniqueId}");
                 ${str}
               })()`
-            import('@babel/standalone').then(Babel => {
-              const transformedScript = Babel.transform(script, {
-                presets: ['es2015', 'react'],
-              }).code
+              try {
+                const transformedScript = Babel.transform(script, {
+                  presets: ['es2015', 'react', 'stage-0']
+                }).code
 
-              // console.log(transformedScript)
-              // eval(transformedScript)
+                eval(transformedScript)
+              } catch (err) {
+                console.error(err)
+              }
             })
 
-            const finalHTML = `
+            return `
                 <div>${highlighedCode}</div>
                 <div id="${uniqueId}" class="render-js"></div>
               `
-            console.log(finalHTML)
-            return finalHTML
           }
 
           return highlighedCode
         }
 
         return str
-      },
+      }
+    })
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({
+        value: initValue.trim()
+      })
     })
   }
 
   handleTextAreaChange = e => {
     this.setState({
-      value: e.target.value.trim(),
+      value: e.target.value
     })
   }
 
@@ -128,7 +136,7 @@ Yes.`,
         <Col xs={12}>
           <div
             dangerouslySetInnerHTML={{
-              __html: this.md.render(this.state.value),
+              __html: this.md.render(this.state.value)
             }}
           />
         </Col>
